@@ -1,0 +1,47 @@
+# Ignore Visual Studio files
+.vs/
+*.VC.db
+*.VC.VC.opendb
+
+# Ignore Unreal Engine binaries and build files
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+
+# Ignore build output files
+*.pdb
+*.sdf
+*.opendb
+*.VC.db
+*.VC.opendb
+*.log
+
+# Ignore config files that are user-specific
+*.user
+*.useros
+*.userprefs
+*.sln.DotSettings
+
+# Ignore UAT files
+Build/DerivedDataCache/
+Build/SharedDerivedDataCache/
+Build/AutomationTools/
+
+# Ignore platform-specific build files
+*.xcodeproj/
+*.xcworkspace/
+*.DS_Store
+*.idea/
+*.vscode/
+
+# Ignore Mac specific files
+.DS_Store
+
+# Ignore Linux specific files
+*.so
+*.so.*
+*.a
+*.la
+*.lo
+.
