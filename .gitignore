@@ -1,47 +1,53 @@
-# Ignore Visual Studio files
-.vs/
-*.VC.db
-*.VC.VC.opendb
+# Ignore all files by default, but scan all directories.
+*
+!*/
 
-# Ignore Unreal Engine binaries and build files
-Binaries/
-Intermediate/
-Saved/
-DerivedDataCache/
+# Do not ignore git files in the root of the repo.
+!/.git*
+# Do not ignore README.md
+!README.md
+# Do not ignore current project's `.uproject`.
+!/*.uproject
 
-# Ignore build output files
-*.pdb
-*.sdf
-*.opendb
-*.VC.db
-*.VC.opendb
-*.log
+# Do not ignore source, config and plugins dirs.
+!/Source/**
+!/Config/**
+!/Plugins/**
 
-# Ignore config files that are user-specific
-*.user
-*.useros
-*.userprefs
-*.sln.DotSettings
+# Only allow .uasset and .umap files from /Content dir.
+# They're tracked by git-lfs, don't forget to track other
+# files if adding them here.
+!/Content/**/*.uasset
+!/Content/**/*.umap
 
-# Ignore UAT files
-Build/DerivedDataCache/
-Build/SharedDerivedDataCache/
-Build/AutomationTools/
+# Allow any files from /RawContent dir.
+# Any file in /RawContent dir will be managed by git lfs.
+!/RawContent/**/*
 
-# Ignore platform-specific build files
-*.xcodeproj/
-*.xcworkspace/
-*.DS_Store
-*.idea/
-*.vscode/
+# OS/platform generated files.
 
-# Ignore Mac specific files
+# Windows
+ehthumbs.db
+Thumbs.db
+
+# Mac OS X
 .DS_Store
+.DS_Store?
+.AppleDouble
+.LSOverride
+._*
 
-# Ignore Linux specific files
-*.so
-*.so.*
-*.a
-*.la
-*.lo
-.
+# Linux
+*~
+.directory
+
+# vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+
+# Visual Studio
+.vs
+Stylized_Nature_ExampleScene.umap
