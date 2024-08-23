@@ -53,6 +53,10 @@ void AAIEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 float AAIEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
+	if (DamageSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
+	}
     Health -= DamageAmount;
 	if (Health <= 0.f) {
 		Destroy();
@@ -85,7 +89,7 @@ void AAIEnemy::MoveTowardsPlayer()
 void AAIEnemy::AttackPlayer()
 {
 	if (CanAttack) {
-		UE_LOG(LogTemp, Warning, TEXT("Attacking player!"));
+		// UE_LOG(LogTemp, Warning, TEXT("Attacking player!"));
 		FVector DirectionToPlayer = (PlayerCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
 		SetActorRotation(FQuat(NewRotation));
@@ -94,6 +98,10 @@ void AAIEnemy::AttackPlayer()
 			// Play the attack montage if it's not already playing
 			GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
 			SphereTrace();
+			if (AttackSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+			}
 		}
 	}
     

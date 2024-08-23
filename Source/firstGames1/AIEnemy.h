@@ -59,4 +59,9 @@ protected:
     float Health;
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool CanAttack = true;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    USoundBase* AttackSound;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    USoundBase* DamageSound;
 };

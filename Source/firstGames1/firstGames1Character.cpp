@@ -82,6 +82,10 @@ void AfirstGames1Character::Attack()
 			// Play the attack montage if it's not already playing
 			GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
 			SphereTrace();
+			if (AttackSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+			}
 		}
 	}
 	
@@ -90,6 +94,10 @@ void AfirstGames1Character::Attack()
 float AfirstGames1Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
+	if (DamageSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
+	}
 	Health -= DamageAmount;
 	if (Health <= 0.f)
 	{

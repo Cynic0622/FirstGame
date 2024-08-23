@@ -85,5 +85,10 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* AttackSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* DamageSound;
+
 };
 
