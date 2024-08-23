@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "firstGames1Character.h"
+// #include "DrawDebugHelpers.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,6 +11,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -77,10 +79,9 @@ void AfirstGames1Character::Attack()
 	{
 		if (AttackMontage && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage))
 		{
-			CanAttack = false;
 			// Play the attack montage if it's not already playing
 			GetMesh()->GetAnimInstance()->Montage_Play(AttackMontage);
-			CanAttack = true;
+			SphereTrace();
 		}
 	}
 	
@@ -90,7 +91,11 @@ float AfirstGames1Character::TakeDamage(float DamageAmount, FDamageEvent const& 
 	AController* EventInstigator, AActor* DamageCauser)
 {
 	Health -= DamageAmount;
-	return Health;
+	if (Health <= 0.f)
+	{
+		Destroy();
+	}
+	return DamageAmount;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,5 +157,43 @@ void AfirstGames1Character::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AfirstGames1Character::SphereTrace()
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * 20.f; // 你可以设置 End 为与 Start 不同的位置以适应需要
+	float Radius = 100.0f; // 球体半径
+	FHitResult HitResult;
+
+	// 设置碰撞查询参数
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this); // 忽略当前Actor
+
+	// 执行球体碰撞检测
+	bool bHit = GetWorld()->SweepSingleByChannel(
+		HitResult,                   // Hit result
+		Start,                      // 起始位置
+		End,
+		FQuat::Identity,// 结束位置（可以是 Start + Direction * Distance）
+		                    // 球体半径
+		ECC_Pawn,                   // 碰撞通道
+		FCollisionShape::MakeSphere(Radius),
+		QueryParams                 // 碰撞查询参数
+	);
+
+	if (bHit)
+	{
+		// 处理碰撞结果
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor && HitActor->IsA(ACharacter::StaticClass()))
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
+			UGameplayStatics::ApplyDamage(HitActor, 10.0f, GetController(), this, UDamageType::StaticClass());
+		}
+
+		// 可选：绘制调试信息
+		// DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, Radius, 12, FColor::Red, false, 1.0f);
 	}
 }

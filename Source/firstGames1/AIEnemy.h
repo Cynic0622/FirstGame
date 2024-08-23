@@ -26,6 +26,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 private:
     UPROPERTY(EditAnywhere, Category = "AI")
     float MoveSpeed;
@@ -48,8 +50,13 @@ private:
 
     // Function to attack the player
     void AttackPlayer();
+	void SphereTrace();
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     UAnimMontage* AttackMontage;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Health;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool CanAttack = true;
 };

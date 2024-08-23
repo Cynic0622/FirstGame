@@ -58,7 +58,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+	void SphereTrace();
 
 protected:
 	// APawn interface
@@ -82,7 +82,7 @@ protected:
 	bool CanAttack = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
 	UAnimMontage* AttackMontage;
-
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Health;
 };
