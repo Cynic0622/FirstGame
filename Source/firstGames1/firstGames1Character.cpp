@@ -94,14 +94,15 @@ void AfirstGames1Character::Attack()
 float AfirstGames1Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 	AController* EventInstigator, AActor* DamageCauser)
 {
-	if (DamageSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
-	}
+	
 	Health -= DamageAmount;
 	if (Health <= 0.f)
 	{
 		Destroy();
+	}
+	if (DamageSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
 	}
 	return DamageAmount;
 }
@@ -171,8 +172,8 @@ void AfirstGames1Character::Look(const FInputActionValue& Value)
 void AfirstGames1Character::SphereTrace()
 {
 	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * 20.f; // 你可以设置 End 为与 Start 不同的位置以适应需要
-	float Radius = 100.0f; // 球体半径
+	FVector End = Start + GetActorForwardVector() * 1000.f; // 你可以设置 End 为与 Start 不同的位置以适应需要
+	float Radius = 50.0f; // 球体半径
 	FHitResult HitResult;
 
 	// 设置碰撞查询参数
@@ -186,18 +187,21 @@ void AfirstGames1Character::SphereTrace()
 		End,
 		FQuat::Identity,// 结束位置（可以是 Start + Direction * Distance）
 		                    // 球体半径
-		ECC_Pawn,                   // 碰撞通道
+		ECC_WorldDynamic,                   // 碰撞通道
 		FCollisionShape::MakeSphere(Radius),
 		QueryParams                 // 碰撞查询参数
 	);
-
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 1.0f);
+	// DrawDebugSphere(GetWorld(), End, Radius, 12, FColor::Yellow, false, 1.0f);
+	// DrawDebugSphere(GetWorld(), Start, Radius, 12, FColor::Red, false, 1.0f);
 	if (bHit)
 	{
 		// 处理碰撞结果
 		AActor* HitActor = HitResult.GetActor();
+		UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
 		if (HitActor && HitActor->IsA(ACharacter::StaticClass()))
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
 			UGameplayStatics::ApplyDamage(HitActor, 10.0f, GetController(), this, UDamageType::StaticClass());
 		}
 

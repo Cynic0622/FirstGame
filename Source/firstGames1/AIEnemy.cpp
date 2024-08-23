@@ -93,6 +93,7 @@ void AAIEnemy::AttackPlayer()
 		FVector DirectionToPlayer = (PlayerCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
 		SetActorRotation(FQuat(NewRotation));
+
 		if (AttackMontage && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage))
 		{
 			// Play the attack montage if it's not already playing
@@ -110,7 +111,7 @@ void AAIEnemy::SphereTrace()
 {
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorForwardVector() * 20.f; // 你可以设置 End 为与 Start 不同的位置以适应需要
-	float Radius = 100.0f; // 球体半径
+	float Radius = 50.0f; // 球体半径
 	FHitResult HitResult;
 
 	// 设置碰撞查询参数
@@ -124,7 +125,7 @@ void AAIEnemy::SphereTrace()
 		End,
 		FQuat::Identity,// 结束位置（可以是 Start + Direction * Distance）
 		// 球体半径
-		ECC_Pawn,                   // 碰撞通道
+		ECC_WorldDynamic,                   // 碰撞通道
 		FCollisionShape::MakeSphere(Radius),
 		QueryParams                 // 碰撞查询参数
 	);
