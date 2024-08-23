@@ -52,6 +52,8 @@ AfirstGames1Character::AfirstGames1Character()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	Health = 100.f;
 }
 
 void AfirstGames1Character::BeginPlay()
@@ -82,6 +84,13 @@ void AfirstGames1Character::Attack()
 		}
 	}
 	
+}
+
+float AfirstGames1Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	AController* EventInstigator, AActor* DamageCauser)
+{
+	Health -= DamageAmount;
+	return Health;
 }
 
 //////////////////////////////////////////////////////////////////////////
