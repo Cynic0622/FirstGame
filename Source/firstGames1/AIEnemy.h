@@ -52,6 +52,8 @@ private:
     void AttackPlayer();
 	void SphereTrace();
 
+    void ResetAttack();
+
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat")
     UAnimMontage* AttackMontage;

@@ -20,6 +20,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 AfirstGames1Character::AfirstGames1Character()
 {
+	this->Tags.Add(FName("Player"));
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 		
@@ -77,6 +78,7 @@ void AfirstGames1Character::Attack()
 {
 	if (CanAttack)
 	{
+		CanAttack = false;
 		if (AttackMontage && !GetMesh()->GetAnimInstance()->Montage_IsPlaying(AttackMontage))
 		{
 			// Play the attack montage if it's not already playing
@@ -86,23 +88,47 @@ void AfirstGames1Character::Attack()
 			{
 				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 			}
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AfirstGames1Character::ResetAttack, 1.0f, false);
+
 		}
 	}
 	
 }
 
+void AfirstGames1Character::ResetAttack()
+{
+	CanAttack = true;
+}
+
 float AfirstGames1Character::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
+                                        AController* EventInstigator, AActor* DamageCauser)
 {
 	
 	Health -= DamageAmount;
 	if (Health <= 0.f)
 	{
 		Destroy();
+		UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
 	}
 	if (DamageSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, DamageSound, GetActorLocation());
+	}
+	if (DamageCauser)
+	{
+		FVector DamageCauserLocation = DamageCauser->GetActorLocation();
+		FVector DirectionToMove = GetActorLocation() - DamageCauserLocation;
+		DirectionToMove.Normalize(); // 确保方向向量是单位向量
+
+		// 定义退后步伐的距离
+		float BackwardStepDistance = 200.0f; // 调整为你需要的距离
+
+		// 计算新位置
+		FVector NewLocation = GetActorLocation() + (DirectionToMove * BackwardStepDistance);
+
+		// 设置主角的新位置
+		SetActorLocation(NewLocation);
 	}
 	return DamageAmount;
 }

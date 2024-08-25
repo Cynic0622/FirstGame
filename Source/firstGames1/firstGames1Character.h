@@ -70,6 +70,8 @@ protected:
 	
 	// Function to handle attack
 	void Attack();
+
+	void ResetAttack();
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

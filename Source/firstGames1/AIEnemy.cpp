@@ -34,6 +34,7 @@ void AAIEnemy::Tick(float DeltaTime)
 
         if (DistanceToPlayer <= AttackRange)
         {
+			
             AttackPlayer();
         }
         else
@@ -62,6 +63,21 @@ float AAIEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, 
 		Destroy();
 		// CanAttack = false;
 	}
+	if (DamageCauser)
+	{
+		FVector DamageCauserLocation = DamageCauser->GetActorLocation();
+		FVector DirectionToMove = GetActorLocation() - DamageCauserLocation;
+		DirectionToMove.Normalize(); // 确保方向向量是单位向量
+
+		// 定义退后步伐的距离
+		float BackwardStepDistance = 200.0f; // 调整为你需要的距离
+
+		// 计算新位置
+		FVector NewLocation = GetActorLocation() + (DirectionToMove * BackwardStepDistance);
+
+		// 设置主角的新位置
+		SetActorLocation(NewLocation);
+	}
     return DamageAmount;
 }
 
@@ -89,6 +105,7 @@ void AAIEnemy::MoveTowardsPlayer()
 void AAIEnemy::AttackPlayer()
 {
 	if (CanAttack) {
+		CanAttack = false;
 		// UE_LOG(LogTemp, Warning, TEXT("Attacking player!"));
 		FVector DirectionToPlayer = (PlayerCharacter->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		FRotator NewRotation = FRotationMatrix::MakeFromX(DirectionToPlayer).Rotator();
@@ -103,10 +120,14 @@ void AAIEnemy::AttackPlayer()
 			{
 				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 			}
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AAIEnemy::ResetAttack, 1.0, false);
 		}
 	}
     
 }
+
+
 void AAIEnemy::SphereTrace()
 {
 	FVector Start = GetActorLocation();
@@ -136,14 +157,22 @@ void AAIEnemy::SphereTrace()
 		AActor* HitActor = HitResult.GetActor();
 		if (HitActor && HitActor->IsA(ACharacter::StaticClass()))
 		{
-			// UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
-			UGameplayStatics::ApplyDamage(HitActor, 10.0f, GetController(), this, UDamageType::StaticClass());
-			auto t = Cast<AfirstGames1Character>(HitActor);
-			if (t->Health <= 0.f) CanAttack = false;
+			if (HitActor->ActorHasTag("Player")) {
+				// UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *HitActor->GetName());
+				UGameplayStatics::ApplyDamage(HitActor, 10.0f, GetController(), this, UDamageType::StaticClass());
+				auto t = Cast<AfirstGames1Character>(HitActor);
+				if (t->Health <= 0.f) CanAttack = false;
+			}
+			
 		}
-
+		
 		// 可选：绘制调试信息
 		// DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, Radius, 12, FColor::Red, false, 1.0f);
 	}
+}
+
+void AAIEnemy::ResetAttack()
+{
+	CanAttack = true;
 }
 
